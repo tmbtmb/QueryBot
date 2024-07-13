@@ -1,0 +1,25 @@
+!pip install langchain-community --upgrade
+
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+from langchain_community.llms import Ollama
+import streamlit as st
+
+st.title("Thambidurai's Demo Bot")
+input_text = st.text_input("How can I assist you today?")
+prompt = ChatPromptTemplate.from_messages(
+    [("system", "You are my AI assistant. Your name is Thambidurai's Assistant"),
+     ("user", "user query:{query}")])
+
+llm = Ollama(model="llama2") 
+output_parser = StrOutputParser()
+chain = prompt | llm | output_parser
+
+if input_text:
+    try:
+        result = chain.invoke({"query": input_text})
+        st.write("Result:", result)  # Display the result
+    except Exception as e:
+        st.error(f"An error occurred: {e}")  # Display any errors
+else:
+    st.write("Please enter a query.")  # Prompt for input
